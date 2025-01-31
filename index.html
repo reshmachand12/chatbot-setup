@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Setup</title>
+    <style>
+        /* General body setup */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('https://static.vecteezy.com/system/resources/previews/003/354/888/non_2x/robot-virtual-assistance-or-chatbot-background-illustration-vector.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Container styling for each section */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        /* Input and textarea styling */
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        /* Button styling */
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        /* Styling for Scraped Data Section */
+        .scraped-data ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .scraped-data li {
+            background: rgba(0, 0, 0, 0.1);
+            margin: 5px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .scraped-data li:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Chatbox UI */
+        #chatbox {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+            padding: 10px;
+        }
+
+        #chatbox .chatbox-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+        }
+
+        #chatbox .chatbox-messages {
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        #chatbox .chatbox-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        #chatbox .chatbox-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Confetti UI Success */
+        .confetti {
+            display: none;
+            text-align: center;
+            background-color: #e1f5fe;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Social media buttons */
+        .social-btn {
+            background: #3b5998; /* Facebook color */
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        .social-btn:hover {
+            background: #8b9dc3;
+        }
+
+        .social-btn.twitter {
+            background: #1da1f2; /* Twitter color */
+        }
+
+        .social-btn.twitter:hover {
+            background: #3dc8ff;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            body {
+                font-size: 14px;
+                justify-content: flex-start;
+            }
+
+            .container {
+                padding: 15px;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            #chatbox {
+                width: 250px;
+            }
+
+            .social-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- User Registration -->
+    <div class="container" id="registration">
+        <h2>Register Your Account</h2>
+        <input type="text" id="name" placeholder="Enter your name" required><br>
+        <input type="email" id="email" placeholder="Enter your email" required><br>
+        <input type="password" id="password" placeholder="Enter your password" required><br>
+        <button onclick="register()">Register</button>
+        <p>OR</p>
+        <button onclick="continueWithGoogle()">Continue with Google</button>
+    </div>
+
+    <!-- Email Verification -->
+    <div class="container" id="email-verification" style="display: none;">
+        <h2>Verify Your Email</h2>
+        <input type="text" id="verification-code" placeholder="Enter verification code" required><br>
+        <button onclick="verifyEmail()">Verify</button>
+    </div>
+
+    <!-- Organization Setup -->
+    <div class="container" id="setup-organization" style="display: none;">
+        <h2>Setup Your Organization</h2>
+        <input type="text" id="company-name" placeholder="Enter your company name" required><br>
+        <input type="url" id="company-url" placeholder="Enter your company website URL" required><br>
+        <textarea id="company-description" placeholder="Enter a short description of your company" required></textarea><br>
+        <button onclick="setupOrganization()">Next</button>
+    </div>
+
+    <!-- Scraped Data -->
+    <div class="container" id="scraped-data" style="display: none;">
+        <h2>Scraped Data from Website</h2>
+        <div class="scraped-data">
+            <ul>
+                <li class="scraped" onclick="viewDataChunks('Page 1')">Page 1 - Scraped</li>
+                <li class="scraped" onclick="viewDataChunks('Page 2')">Page 2 - Scraped</li>
+                <li class="pending" onclick="viewDataChunks('Page 3')">Page 3 - Pending</li>
+                <li class="pending" onclick="viewDataChunks('Page 4')">Page 4 - Pending</li>
+            </ul>
+        </div>
+        <div id="data-chunks-display" style="display: none;">
+            <h3>Scraped Data for <span id="page-title"></span></h3>
+            <div id="data-chunks-content"></div>
+        </div>
+        <button id="next-button" onclick="goToNextStep()">Next</button>
+    </div>
+
+    <!-- Chatbot Integration & Testing -->
+    <div class="container" id="chatbot-integration" style="display: none;">
+        <h2>Chatbot Integration & Testing</h2>
+        <button onclick="testChatbot()">Test Chatbot</button><br>
+        <button onclick="integrateChatbot()">Integrate Chatbot</button><br>
+        <button onclick="testIntegration()">Test Integration</button><br>
+    </div>
+
+    <!-- Success UI -->
+    <div class="confetti" id="confetti" style="display: none;">
+        <h2>Success!</h2>
+        <p>Your chatbot has been successfully integrated.</p>
+        <button onclick="exploreAdminPanel()">Explore Admin Panel</button><br>
+        <button onclick="startTalking()">Start Talking to Your Chatbot</button><br>
+        <button class="social-btn" onclick="shareOnFacebook()">Share on Facebook</button>
+        <button class="social-btn twitter" onclick="shareOnTwitter()">Share on Twitter</button>
+    </div>
+
+    <!-- Chatbox UI -->
+    <div id="chatbox">
+        <div class="chatbox-header">Chatbot</div>
+        <div class="chatbox-messages" id="messages"></div>
+        <textarea id="user-input" class="chatbox-input" placeholder="Type a message..."></textarea><br>
+        <button class="chatbox-btn" onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        // Registration function
+        function register() {
+            document.getElementById('registration').style.display = 'none';
+            document.getElementById('email-verification').style.display = 'block';
+        }
+
+        // Email verification function
+        function verifyEmail() {
+            alert("Email verified!");
+            document.getElementById('email-verification').style.display = 'none';
+            document.getElementById('setup-organization').style.display = 'block';
+        }
+
+        // Setup organization
+        function setupOrganization() {
+            document.getElementById('setup-organization').style.display = 'none';
+            document.getElementById('scraped-data').style.display = 'block';
+        }
+
+        // View data chunks for each page
+        function viewDataChunks(page) {
+            document.getElementById('page-title').innerText = page;
+            const chunks = {
+                'Page 1': ['Chunk 1 - Data', 'Chunk 2 - Data'],
+                'Page 2': ['Chunk 1 - Data'],
+                'Page 3': ['Chunk 1 - Data'],
+                'Page 4': ['Chunk 1 - Data', 'Chunk 2 - Data']
+            };
+            const chunksContainer = document.getElementById('data-chunks-content');
+            chunksContainer.innerHTML = '';
+            chunks[page].forEach(chunk => {
+                const chunkDiv = document.createElement('div');
+                chunkDiv.textContent = chunk;
+                chunksContainer.appendChild(chunkDiv);
+            });
+            document.getElementById('data-chunks-display').style.display = 'block';
+        }
+
+        // Go to next step
+        function goToNextStep() {
+            document.getElementById('scraped-data').style.display = 'none';
+            document.getElementById('chatbot-integration').style.display = 'block';
+        }
+
+        // Test Chatbot
+        function testChatbot() {
+            alert("Opening chatbot on client's website...");
+        }
+
+        // Integrate chatbot
+        function integrateChatbot() {
+            alert("Providing integration instructions...");
+        }
+
+        // Test integration
+        function testIntegration() {
+            document.getElementById('chatbot-integration').style.display = 'none';
+            document.getElementById('confetti').style.display = 'block';
+        }
+
+        // Explore admin panel
+        function exploreAdminPanel() {
+            alert("Opening admin panel...");
+        }
+
+        // Start talking
+        function startTalking() {
+            document.getElementById('chatbox').style.display = 'block';
+        }
+
+        // Share on social media
+        function shareOnFacebook() {
+            alert("Sharing on Facebook...");
+        }
+
+        function shareOnTwitter() {
+            alert("Sharing on Twitter...");
+        }
+
+        // Send message in chatbox
+        function sendMessage() {
+            const userMessage = document.getElementById('user-input').value;
+            const messagesContainer = document.getElementById('messages');
+            const userMessageElement = document.createElement('div');
+            userMessageElement.textContent = `User: ${userMessage}`;
+            messagesContainer.appendChild(userMessageElement);
+
+            // Simulating bot reply
+            const botReply = document.createElement('div');
+            botReply.textContent = `Bot: Replying to "${userMessage}"`;
+            messagesContainer.appendChild(botReply);
+
+            // Clear input
+            document.getElementById('user-input').value = '';
+        }
+    </script>
+
+</body>
+</html>
